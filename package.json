@@ -1,0 +1,42 @@
+{
+  "name": "git-browse-github-search",
+  "version": "0.0.1",
+  "description": "This is sub module for git-browse",
+  "keywords": [
+    "git",
+    "github",
+    "CLI",
+    "terminal"
+  ],
+  "bin": {
+    "git-browse-github-search": "index.js"
+  },
+  "preferGlobal": true,
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "test": "$(npm bin)/mocha ./test/*.unit.js"
+  },
+  "author": "KamataRyo <mugil.cephalus+github.com@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KamataRyo/git-browse-github-search.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KamataRyo/git-browse-github-search/issues"
+  },
+  "homepage": "https://github.com/KamataRyo/git-browse-github-search#readme",
+  "config": {
+    "protocol": "https",
+    "host": "github.com"
+  },
+  "devDependencies": {
+    "mocha": "^3.0.2",
+    "should": "^11.1.0"
+  },
+  "dependencies": {
+    "request": "^2.75.0"
+  }
+}
