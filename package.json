@@ -15,7 +15,8 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "test": "$(npm bin)/mocha ./test/*.unit.js"
+    "lint": "eslint .",
+    "test": "mocha ./test/*.unit.js"
   },
   "author": "KamataRyo <mugil.cephalus+github.com@gmail.com>",
   "license": "MIT",
@@ -32,6 +33,7 @@
     "host": "api.github.com"
   },
   "devDependencies": {
+    "eslint": "^3.6.1",
     "mocha": "^3.0.2",
     "should": "^11.1.0"
   },

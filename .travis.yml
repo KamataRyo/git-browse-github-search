@@ -8,5 +8,6 @@ branches:
   - master
 before_script:
 - npm install
+- npm run lint
 script:
 - npm test
