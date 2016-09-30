@@ -5,7 +5,7 @@
  * @param  {Function} success [description]
  * @param  {Function} failure [description]
  */
-module.exports.getRepocomps = (args) => {
+module.exports = (args) => {
 
   /**
    * Github User Name

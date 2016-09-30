@@ -1,4 +1,4 @@
-var getRepocomps = require('../lib').getRepocomps
+var search = require('../index')
 require('should')
 
 describe('Test of requests', () => {
@@ -13,7 +13,7 @@ describe('Test of requests', () => {
         console.log(result)
       }
     }
-    getRepocomps(options)
+    search(options)
   }).timeout(20000)
 
   it('can make request with username and reponame', (done) => {
@@ -28,6 +28,6 @@ describe('Test of requests', () => {
         console.log(result)
       }
     }
-    getRepocomps(options)
+    search(options)
   }).timeout(20000)
 })

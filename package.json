@@ -9,8 +9,9 @@
     "terminal"
   ],
   "bin": {
-    "git-browse-github-search": "main.js"
+    "git-browse-github-search": "bin.js"
   },
+  "main": "index.js",
   "engines": {
     "node": ">=4.0.0"
   },
