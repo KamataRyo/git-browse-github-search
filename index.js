@@ -61,49 +61,53 @@ var search = (args) => {
     }
   }
 
-  // make request
-  request(options, (err, res, body) => {
-    /**
-    * contain result
-    * @type {Array}
-    */
-    var comps = []
+  getCache(options.uri, (val) => {
+    if (val) {
+      success(val)
 
-    /**
-    * items parsed from response
-    * @type {[type]}
-    */
-    // When obtained correct result..
-    if (!err) {
-      try {
-        var items = JSON.parse(body).items
-        if (Array.isArray(items)) {
-          items.forEach((item) => {
-            var regexp = new RegExp(`^${repo}`)
-            if (item.name.match(regexp)) {
-              comps.push(item.name)
-            }
-          })
-        }
-        success(comps)
-      } catch (e) {
-        failure(e)
-      }
     } else {
-      failure(err)
+      // make request
+      request(options, (err, res, body) => {
+
+        var results = []
+        // When obtained correct result..
+        if (!err) {
+          try {
+            var items = JSON.parse(body).items
+            if (Array.isArray(items)) {
+              items.forEach((item) => {
+                var regexp = new RegExp(`^${repo}`)
+                if (item.name.match(regexp)) {
+                  results.push(item.name)
+                }
+              })
+            }
+            setCache(options.uri, results)
+            success(results)
+          } catch (e) {
+            failure(e)
+          }
+        } else {
+          failure(err)
+        }
+      })
     }
   })
 }
 
-var getAllCache = (callback) => {
-  fs.readFile(cacheFile, 'utf-8', (err, text) => {
-    // file not found
-    if (err) {
-      callback({})
-    } else {
-      callback(JSON.parse(text))
-    }
-  })
+var getAllCache = callback => {
+  var history = '';
+  fs.createReadStream(cacheFile, {encoding: 'utf-8'})
+    .on('error', () => callback({}))
+    .on('data', (data) => history += data)
+    .on('end', () => {
+      try {
+        var result = JSON.parse(history)
+        callback(result)
+      } catch (e) {
+        callback({})
+      }
+    })
 }
 
 var deleteCache = (key, callback) => {
@@ -118,11 +122,17 @@ var deleteCache = (key, callback) => {
 
 var getCache = (key, callback) => {
   getAllCache(history => {
-    if (new Date(history[key].expireAt) < new Date()) {
-      deleteCache(key)
-      callback(undefined)
+    var defined = key in history
+    if (defined) {
+      var expired = new Date(history[key].expireAt) < new Date()
+      if (!expired) {
+        callback(history[key].value)
+      } else {
+        deleteCache(key)
+        callback(undefined)
+      }
     } else {
-      callback(history[key].value)
+      callback(undefined)
     }
   })
 }

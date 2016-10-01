@@ -87,16 +87,18 @@ describe('test of caching', () => {
   })
 
   it('should read file if exists', done => {
-    var ws = fs.createWriteStream(cacheFile)
-      .on('close', () => {
-        getAllCache(history => {
-          history.key.should.equal('value')
-          done()
+    fs.unlink(cacheFile, () => {
+      var ws = fs.createWriteStream(cacheFile)
+        .on('close', () => {
+          getAllCache(history => {
+            history.key.should.equal('value')
+            done()
+          })
         })
-      })
 
-    ws.write('{"key":"value"}')
-    ws.end()
+      ws.write('{"key":"value"}')
+      ws.end()
+    })
   })
 
   it('should delete cached value', done => {
@@ -121,6 +123,17 @@ describe('test of caching', () => {
       setCache('key2', 'value2', 60, () => {
         getCache('key2', val => {
           val.should.equal('value2')
+          done()
+        })
+      })
+    })
+  })
+
+  it('should not get undefined cache', done => {
+    fs.unlink(cacheFile, () => {
+      setCache('key3', 'value3', 60, () => {
+        getCache('undefined-key', val => {
+          should.equal(val, undefined)
           done()
         })
       })
