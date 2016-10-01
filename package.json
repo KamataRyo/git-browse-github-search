@@ -1,6 +1,6 @@
 {
   "name": "git-browse-github-search",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "This is sub module for git-browse",
   "keywords": [
     "git",
@@ -33,7 +33,8 @@
     "protocol": "https",
     "host": "api.github.com",
     "directory": "search/repositories",
-    "history": "~/.git-browse-github-search_history"
+    "history": ".git-browse-github-search_history",
+    "ttl": 86400
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",

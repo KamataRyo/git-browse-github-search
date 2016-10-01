@@ -9,9 +9,11 @@
  * @param  {Function} failure [description]
  */
 
+var fs = require('fs')
 var meta = require('./package.json')
-
-module.exports.search = (args) => {
+var home = process.env.HOME || process.env.USERPROFILE
+var cacheFile = `${home}/${meta.config.history}`
+var search = (args) => {
 
   var user      = args.user      || undefined
   var repo      = args.repo      || ''
@@ -50,45 +52,115 @@ module.exports.search = (args) => {
   // modules and parameter requirement
   var request = require('request')
 
+  var query = `${repo}+user:${user}`
+
   // build request option
   var options = {
     method: 'GET',
-    uri: `${protocol}://${host}/${directory}?q=${repo}+user:${user}`,
+    uri: `${protocol}://${host}/${directory}?q=${query}`,
     headers: {
       'User-Agent': 'git-browse'
     }
   }
 
-  // make request
-  request(options, (err, res, body) => {
-    /**
-    * contain result
-    * @type {Array}
-    */
-    var comps = []
+  getCache(options.uri, (val) => {
+    if (val) {
+      success(val)
 
-    /**
-    * items parsed from response
-    * @type {[type]}
-    */
-    // When obtained correct result..
-    if (!err) {
-      try {
-        var items = JSON.parse(body).items
-        if (Array.isArray(items)) {
-          items.forEach((item) => {
-            var regexp = new RegExp(`^${repo}`)
-            if (item.name.match(regexp)) {
-              comps.push(item.name)
-            }
-          })
-        }
-        success(comps)
-      } catch (e) {
-        failure(e)
-      }
     } else {
-      failure(err)
+      // make request
+      request(options, (err, res, body) => {
+
+        var results = []
+        // When obtained correct result..
+        if (!err) {
+          try {
+            var items = JSON.parse(body).items
+            if (Array.isArray(items)) {
+              items.forEach((item) => {
+                var regexp = new RegExp(`^${repo}`)
+                if (item.name.match(regexp)) {
+                  results.push(item.name)
+                }
+              })
+            }
+            setCache(options.uri, results, meta.config.ttl)
+            success(results)
+          } catch (e) {
+            failure(e)
+          }
+        } else {
+          failure(err)
+        }
+      })
     }
   })
+}
+
+var getAllCache = callback => {
+  var history = '';
+  fs.createReadStream(cacheFile, {encoding: 'utf-8'})
+    .on('error', () => callback({}))
+    .on('data', (data) => history += data)
+    .on('end', () => {
+      try {
+        var result = JSON.parse(history)
+        callback(result)
+      } catch (e) {
+        callback({})
+      }
+    })
+}
+
+var deleteCache = (key, callback) => {
+  getAllCache(history => {
+    delete history[key]
+    var ws = fs.createWriteStream(cacheFile)
+    if (typeof callback == 'function') {
+      ws.on('close', callback)
+    }
+    ws.write(JSON.stringify(history))
+    ws.end()
+  })
+}
+
+var getCache = (key, callback) => {
+  getAllCache(history => {
+    var defined = key in history
+    if (defined) {
+      var expired = new Date(history[key].expireAt) < new Date()
+      if (!expired) {
+        callback(history[key].value)
+      } else {
+        deleteCache(key)
+        callback(undefined)
+      }
+    } else {
+      callback(undefined)
+    }
+  })
+}
+
+var setCache = (key, value, expire, callback) => {
+  getAllCache(history => {
+    var now = new Date()
+    history[key] = {
+      value,
+      expireAt: now.setSeconds(now.getSeconds() + expire )
+    }
+    var ws = fs.createWriteStream(cacheFile)
+    if (typeof callback == 'function') {
+      ws.on('close', callback)
+    }
+    ws.write(JSON.stringify(history))
+    ws.end()
+  })
+}
+
+module.exports = {
+  search,
+  deleteCache,
+  getAllCache,
+  setCache,
+  getCache,
 }
