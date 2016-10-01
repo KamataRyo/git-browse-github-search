@@ -10,10 +10,13 @@ This is sub-module for [git-browse](https://npmjs.com/git-browse).
 ## Install
 
 ```
-$ npm i -g git-browse-github-search
+$ npm install -g git-browse-github-search
+$ npm install git-browse-github-search
 ```
 
 ## Usage
+
+### as CLI tool
 
 ```
 $ git-browse-github-search foo example-
@@ -21,3 +24,16 @@ example-a example-b example-c
 ```
 
 In this case, the user 'foo' has 3 repositories on Github, example-a, example-b, example-c
+
+### as required module
+
+```
+var search = require('git-browse-github-search').search
+search({
+  user: 'username',
+  repo: 'repo search words, foward-matching',
+  success: (reponames) => {
+    // reponames is array of user's repositoy name
+  }
+  })
+```

@@ -14,7 +14,7 @@ var meta = require('./package.json')
 module.exports.search = (args) => {
 
   var user      = args.user      || undefined
-  var repo      = args.repo      || undefined
+  var repo      = args.repo      || ''
   var protocol  = args.protocol  || meta.config.protocol
   var host      = args.host      || meta.config.host
   var directory = args.directory || meta.config.directory
@@ -53,20 +53,14 @@ module.exports.search = (args) => {
   // build request option
   var options = {
     method: 'GET',
-    uri: `${protocol}://${host}/${directory}`,
+    uri: `${protocol}://${host}/${directory}?q=${repo}+user:${user}`,
     headers: {
       'User-Agent': 'git-browse'
     }
   }
-  if (user && repo) {
-    options.uri += `?q=${repo}+user:${user}`
-  } else {
-    options.uri += `?q=user:${user}`
-  }
 
   // make request
   request(options, (err, res, body) => {
-
     /**
     * contain result
     * @type {Array}
@@ -78,7 +72,6 @@ module.exports.search = (args) => {
     * @type {[type]}
     */
     // When obtained correct result..
-
     if (!err) {
       try {
         var items = JSON.parse(body).items
