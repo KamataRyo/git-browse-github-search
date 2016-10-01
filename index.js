@@ -84,7 +84,7 @@ var search = (args) => {
                 }
               })
             }
-            setCache(options.uri, results, 60*60*24*30)
+            setCache(options.uri, results, meta.config.ttl)
             success(results)
           } catch (e) {
             failure(e)
