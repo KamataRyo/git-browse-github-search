@@ -33,7 +33,7 @@
     "protocol": "https",
     "host": "api.github.com",
     "directory": "search/repositories",
-    "history": "~/.git-browse-github-search_history"
+    "history": ".git-browse-github-search_history"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",

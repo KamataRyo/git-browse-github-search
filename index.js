@@ -9,9 +9,10 @@
  * @param  {Function} failure [description]
  */
 
+var fs = require('fs')
 var meta = require('./package.json')
 
-module.exports.search = (args) => {
+var search = (args) => {
 
   var user      = args.user      || undefined
   var repo      = args.repo      || ''
@@ -91,4 +92,21 @@ module.exports.search = (args) => {
       failure(err)
     }
   })
+}
+
+var getAllCache = (callback) => {
+  var home = (process.env.HOME || process.env.USERPROFILE)
+  fs.readFile(`${home}/${meta.config.history}`, 'utf-8', (err, text) => {
+    // file not found
+    if (err) {
+      callback({})
+    } else {
+      callback(JSON.parse(text))
+    }
+  })
+}
+
+module.exports = {
+  search,
+  getAllCache
 }

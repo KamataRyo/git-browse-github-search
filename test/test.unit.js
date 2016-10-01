@@ -1,5 +1,10 @@
-var search = require('../index').search
-require('should')
+var {search, getAllCache} = require('../index')
+var should = require('should')
+var fs = require('fs')
+var meta = require('../package.json')
+
+var home = (process.env.HOME || process.env.USERPROFILE)
+var historyFile = `${home}/${meta.config.history}`
 
 describe('Test of requests', () => {
   it('should make request with username', done => {
@@ -64,6 +69,31 @@ describe('Test of requests', () => {
       }
     }
     search(options)
+  }).timeout(20000)
+})
+
+describe('test of caching', () => {
+  it('should not read the history file if not existing', done => {
+    //
+    fs.unlink(historyFile, () => {
+      getAllCache(history => {
+        should.equal(Object.keys(history).length, 0)
+        done()
+      })
+    })
+  })
+
+  it('should read file if exists', done => {
+    var ws = fs.createWriteStream(historyFile)
+      .on('close', () => {
+        getAllCache(history => {
+          history.key.should.equal('value')
+          done()
+        })
+      })
+
+    ws.write('{"key":"value"}')
+    ws.end()
   })
 
 })
