@@ -31,8 +31,31 @@ describe('Test of requests', () => {
     search(options)
   }).timeout(20000)
 
-  it(' should failes request without username', done => {
+  it('should fails without username', done => {
     var options = {
+      failure: err => {
+        err.should.be.an.Object()
+        done()
+      }
+    }
+    search(options)
+  })
+
+  it('should fails with unknown hosts', done => {
+    var options = {
+      host: 'iregal characters {}{}{}',
+      failure: err => {
+        err.should.be.an.Object()
+        done()
+      }
+    }
+    search(options)
+  })
+
+  it('should fails with non-JSON page', done => {
+    var options = {
+      host: 'github.com',
+      directory: 'kamataryo',
       failure: err => {
         err.should.be.an.Object()
         done()

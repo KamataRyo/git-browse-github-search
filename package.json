@@ -31,7 +31,8 @@
   "homepage": "https://github.com/KamataRyo/git-browse-github-search#readme",
   "config": {
     "protocol": "https",
-    "host": "api.github.com"
+    "host": "api.github.com",
+    "directory": "search/repositories"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",

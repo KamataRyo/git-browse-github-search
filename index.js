@@ -25,6 +25,8 @@ module.exports = (args) => {
 
   var host = args.host || meta.config.host
 
+  var directory = args.directory || meta.config.directory
+
   /**
    * Callback for search success
    * @param  {[type]} givenArg   [argument]
@@ -61,7 +63,7 @@ module.exports = (args) => {
   // build request option
   var options = {
     method: 'GET',
-    uri: `${protocol}://${host}/search/repositories`,
+    uri: `${protocol}://${host}/${directory}`,
     headers: {
       'User-Agent': 'git-browse'
     }
@@ -87,25 +89,23 @@ module.exports = (args) => {
     */
     // When obtained correct result..
 
-    if (!err && res.statusCode == 200) {
-      var items = JSON.parse(body).items
-      if (Array.isArray(items)) {
-        items.forEach((item) => {
-          var regexp = new RegExp(`^${repo}`)
-          if (item.name.match(regexp)) {
-            comps.push(item.name)
-          }
-        })
+    if (!err) {
+      try {
+        var items = JSON.parse(body).items
+        if (Array.isArray(items)) {
+          items.forEach((item) => {
+            var regexp = new RegExp(`^${repo}`)
+            if (item.name.match(regexp)) {
+              comps.push(item.name)
+            }
+          })
+        }
+        success(comps)
+      } catch (e) {
+        failure(e)
       }
-      success(comps)
     } else {
-      if (err) {
-        failure(err)
-      } else if (res.statusCode != 200) {
-        failure(new Error(`Request finished with statusCode ${res.statusCode}`))
-      } else {
-        failure(new Error('Irregular json response.'))
-      }
+      failure(err)
     }
   })
 }
