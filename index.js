@@ -1,3 +1,8 @@
+var fs = require('fs')
+var meta = require('./package.json')
+var home = process.env.HOME || process.env.USERPROFILE
+var cacheFile = `${home}/${meta.config.history}`
+
 /**
  * make request to search github and execute callback with the result
  * @param  {String}   user      [Github username]
@@ -8,11 +13,6 @@
  * @param  {Function} success [description]
  * @param  {Function} failure [description]
  */
-
-var fs = require('fs')
-var meta = require('./package.json')
-var home = process.env.HOME || process.env.USERPROFILE
-var cacheFile = `${home}/${meta.config.history}`
 var search = (args) => {
 
   var user      = args.user      || undefined

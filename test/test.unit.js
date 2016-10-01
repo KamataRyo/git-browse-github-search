@@ -1,10 +1,12 @@
-var {
-  search,
-  getAllCache,
-  deleteCache, setCache, getCache} = require('../index')
-var should = require('should')
-var fs = require('fs')
-var meta = require('../package.json')
+var should      = require('should')
+var fs          = require('fs')
+var lib         = require('../index')
+var search      = lib.search
+var getAllCache = lib.getAllCache
+var deleteCache = lib.deleteCache
+var setCache    = lib.setCache
+var getCache    = lib.getCache
+var meta        = require('../package.json')
 
 var home = (process.env.HOME || process.env.USERPROFILE)
 var cacheFile = `${home}/${meta.config.history}`
