@@ -11,7 +11,8 @@
 
 var fs = require('fs')
 var meta = require('./package.json')
-
+var home = (process.env.HOME || process.env.USERPROFILE)
+var cacheFile = `${home}/${meta.config.history}`
 var search = (args) => {
 
   var user      = args.user      || undefined
@@ -95,8 +96,7 @@ var search = (args) => {
 }
 
 var getAllCache = (callback) => {
-  var home = (process.env.HOME || process.env.USERPROFILE)
-  fs.readFile(`${home}/${meta.config.history}`, 'utf-8', (err, text) => {
+  fs.readFile(cacheFile, 'utf-8', (err, text) => {
     // file not found
     if (err) {
       callback({})
@@ -106,7 +106,42 @@ var getAllCache = (callback) => {
   })
 }
 
+var deleteCache = (key, callback) => {
+  getAllCache(history => {
+    delete history[key]
+    var ws = fs.createWriteStream(cacheFile)
+      .on('close', callback)
+    ws.write(JSON.stringify(history))
+    ws.end()
+  })
+}
+
+var getCache = (key, callback) => {
+  getAllCache(history => {
+    console.log(history[key].value)
+    callback(history[key].value)
+    // if (new Date(history[key].expireAt) < new Date()) {
+    //   callback(undefined)
+    // } else {
+    //   callback(history[key].value)
+    // }
+  })
+}
+
+var setCache = (key, value, expire, callback) => {
+  getAllCache(history => {
+    history[key] = {value, expireAt: expire + new Date()}
+    var ws = fs.createWriteStream(cacheFile)
+      .on('close', callback)
+    ws.write(JSON.stringify(history))
+    ws.end()
+  })
+}
+
 module.exports = {
   search,
-  getAllCache
+  deleteCache,
+  getAllCache,
+  setCache,
+  getCache,
 }

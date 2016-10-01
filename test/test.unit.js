@@ -1,10 +1,13 @@
-var {search, getAllCache} = require('../index')
+var {
+  search,
+  getAllCache,
+  deleteCache, setCache, getCache} = require('../index')
 var should = require('should')
 var fs = require('fs')
 var meta = require('../package.json')
 
 var home = (process.env.HOME || process.env.USERPROFILE)
-var historyFile = `${home}/${meta.config.history}`
+var cacheFile = `${home}/${meta.config.history}`
 
 describe('Test of requests', () => {
   it('should make request with username', done => {
@@ -74,8 +77,7 @@ describe('Test of requests', () => {
 
 describe('test of caching', () => {
   it('should not read the history file if not existing', done => {
-    //
-    fs.unlink(historyFile, () => {
+    fs.unlink(cacheFile, () => {
       getAllCache(history => {
         should.equal(Object.keys(history).length, 0)
         done()
@@ -84,7 +86,7 @@ describe('test of caching', () => {
   })
 
   it('should read file if exists', done => {
-    var ws = fs.createWriteStream(historyFile)
+    var ws = fs.createWriteStream(cacheFile)
       .on('close', () => {
         getAllCache(history => {
           history.key.should.equal('value')
@@ -96,4 +98,31 @@ describe('test of caching', () => {
     ws.end()
   })
 
+  it('should delete cached value', done => {
+    fs.unlink(cacheFile, () => {
+      var ws = fs.createWriteStream(cacheFile)
+        .on('close', () => {
+          deleteCache('key1', () =>
+            getAllCache(history => {
+              should.equal(Object.keys(history).length, 0)
+              done()
+            })
+          )
+        })
+
+      ws.write('{"key1":"value1"}')
+      ws.end()
+    })
+  })
+
+  it('should set and serve cache', done => {
+    fs.unlink(cacheFile, () => {
+      setCache('key2', 'value2', 60, () => {
+        getCache('key2', value => {
+          value.should.equal('value2')
+          done()
+        })
+      })
+    })
+  })
 })
