@@ -1,4 +1,4 @@
-var search = require('../index')
+var search = require('../index').search
 require('should')
 
 describe('Test of requests', () => {
@@ -43,6 +43,7 @@ describe('Test of requests', () => {
 
   it('should fails with unknown hosts', done => {
     var options = {
+      user: 'KamataRyo',
       host: 'iregal characters {}{}{}',
       failure: err => {
         err.should.be.an.Object()
@@ -54,6 +55,7 @@ describe('Test of requests', () => {
 
   it('should fails with non-JSON page', done => {
     var options = {
+      user: 'KamataRyo',
       host: 'github.com',
       directory: 'kamataryo',
       failure: err => {

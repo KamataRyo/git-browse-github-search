@@ -1,30 +1,22 @@
 /**
  * make request to search github and execute callback with the result
- * @param  {String}   user     [Github username]
- * @param  {String}   repo     [Github repository search string]
+ * @param  {String}   user      [Github username]
+ * @param  {String}   repo      [Github repository search string]
+ * @param  {String}   protocol  [Replace protocol for the request]
+ * @param  {String}   host      [Replace host for the request]
+ * @param  {String}   directory [Replace directory for the request]
  * @param  {Function} success [description]
  * @param  {Function} failure [description]
  */
-module.exports = (args) => {
 
-  var meta = require('./package.json')
+var meta = require('./package.json')
 
-  /**
-   * Github User Name
-   * @type {[String]}
-   */
-  var user = args.user || undefined
+module.exports.search = (args) => {
 
-  /**
-   * Github Repository name or foward-matching serch word.
-   * @type {[String]}
-   */
-  var repo = args.repo || undefined
-
-  var protocol = args.protocol || meta.config.protocol
-
-  var host = args.host || meta.config.host
-
+  var user      = args.user      || undefined
+  var repo      = args.repo      || undefined
+  var protocol  = args.protocol  || meta.config.protocol
+  var host      = args.host      || meta.config.host
   var directory = args.directory || meta.config.directory
 
   /**
@@ -36,7 +28,6 @@ module.exports = (args) => {
     if (typeof args.success == 'function') {
       return args.success(givenArg)
     }
-    return undefined
   }
 
   /**
@@ -48,7 +39,6 @@ module.exports = (args) => {
     if (typeof args.failure == 'function') {
       args.failure(givenArg)
     }
-    return undefined
   }
 
   // check arguments
