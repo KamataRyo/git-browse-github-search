@@ -76,6 +76,7 @@ describe('Test of requests', () => {
 })
 
 describe('test of caching', () => {
+
   it('should not read the history file if not existing', done => {
     fs.unlink(cacheFile, () => {
       getAllCache(history => {
@@ -118,11 +119,25 @@ describe('test of caching', () => {
   it('should set and serve cache', done => {
     fs.unlink(cacheFile, () => {
       setCache('key2', 'value2', 60, () => {
-        getCache('key2', value => {
-          value.should.equal('value2')
+        getCache('key2', val => {
+          val.should.equal('value2')
           done()
         })
       })
     })
   })
+
+  it('should expire cache', done => {
+    fs.unlink(cacheFile, () => {
+      setCache('key3', 'value3', 1, () => {
+        setTimeout(() => {
+          getCache('key3', val => {
+            should.equal(val, undefined)
+            done()
+          })
+        }, 2000)
+      })
+    })
+  }).timeout(3000)
+
 })

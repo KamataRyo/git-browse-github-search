@@ -118,19 +118,22 @@ var deleteCache = (key, callback) => {
 
 var getCache = (key, callback) => {
   getAllCache(history => {
-    console.log(history[key].value)
-    callback(history[key].value)
-    // if (new Date(history[key].expireAt) < new Date()) {
-    //   callback(undefined)
-    // } else {
-    //   callback(history[key].value)
-    // }
+    if (new Date(history[key].expireAt) < new Date()) {
+      deleteCache(key)
+      callback(undefined)
+    } else {
+      callback(history[key].value)
+    }
   })
 }
 
 var setCache = (key, value, expire, callback) => {
   getAllCache(history => {
-    history[key] = {value, expireAt: expire + new Date()}
+    var now = new Date()
+    history[key] = {
+      value,
+      expireAt: now.setSeconds(now.getSeconds() + expire )
+    }
     var ws = fs.createWriteStream(cacheFile)
       .on('close', callback)
     ws.write(JSON.stringify(history))
