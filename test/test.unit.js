@@ -24,6 +24,21 @@ describe('Test of requests', () => {
     search(options)
   }).timeout(20000)
 
+  it('should make request with cache, finish early', done => {
+    var options = {
+      user: 'KamataRyo',
+      success: comps => {
+        comps.should.be.an.Array()
+        done()
+      },
+      failure: result => {
+        console.log(result)
+      }
+    }
+    search(options)
+  }).timeout(200)
+
+
   it('should make request with username and reponame', done => {
     var options = {
       user: 'KamataRyo',

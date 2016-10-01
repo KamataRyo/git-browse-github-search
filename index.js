@@ -11,7 +11,7 @@
 
 var fs = require('fs')
 var meta = require('./package.json')
-var home = (process.env.HOME || process.env.USERPROFILE)
+var home = process.env.HOME || process.env.USERPROFILE
 var cacheFile = `${home}/${meta.config.history}`
 var search = (args) => {
 
@@ -52,10 +52,12 @@ var search = (args) => {
   // modules and parameter requirement
   var request = require('request')
 
+  var query = `${repo}+user:${user}`
+
   // build request option
   var options = {
     method: 'GET',
-    uri: `${protocol}://${host}/${directory}?q=${repo}+user:${user}`,
+    uri: `${protocol}://${host}/${directory}?q=${query}`,
     headers: {
       'User-Agent': 'git-browse'
     }
@@ -82,7 +84,7 @@ var search = (args) => {
                 }
               })
             }
-            setCache(options.uri, results)
+            setCache(options.uri, results, 60*60*24*30)
             success(results)
           } catch (e) {
             failure(e)
@@ -114,7 +116,9 @@ var deleteCache = (key, callback) => {
   getAllCache(history => {
     delete history[key]
     var ws = fs.createWriteStream(cacheFile)
-      .on('close', callback)
+    if (typeof callback == 'function') {
+      ws.on('close', callback)
+    }
     ws.write(JSON.stringify(history))
     ws.end()
   })
@@ -145,7 +149,9 @@ var setCache = (key, value, expire, callback) => {
       expireAt: now.setSeconds(now.getSeconds() + expire )
     }
     var ws = fs.createWriteStream(cacheFile)
-      .on('close', callback)
+    if (typeof callback == 'function') {
+      ws.on('close', callback)
+    }
     ws.write(JSON.stringify(history))
     ws.end()
   })
