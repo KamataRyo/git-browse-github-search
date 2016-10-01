@@ -40,6 +40,10 @@ search({
 
 ### Releases
 
+## 0.0.6
+
+- Added cache
+
 ## 0.0.5
 
 - Added Release note
