@@ -37,3 +37,17 @@ search({
   }
   })
 ```
+
+### Releases
+
+## 0.0.5
+
+- Added Release note
+
+## 0.0.4
+
+- changed interfaces
+
+## 0.0.1
+
+- Initiated
