@@ -7,6 +7,8 @@
  */
 module.exports = (args) => {
 
+  var meta = require('./package.json')
+
   /**
    * Github User Name
    * @type {[String]}
@@ -18,6 +20,10 @@ module.exports = (args) => {
    * @type {[String]}
    */
   var repo = args.repo || undefined
+
+  var protocol = args.protocol || meta.config.protocol
+
+  var host = args.host || meta.config.host
 
   /**
    * Callback for search success
@@ -51,12 +57,11 @@ module.exports = (args) => {
 
   // modules and parameter requirement
   var request = require('request')
-  var meta = require('./package.json')
 
   // build request option
   var options = {
     method: 'GET',
-    uri: `${meta.config.protocol}://${meta.config.host}/search/repositories`,
+    uri: `${protocol}://${host}/search/repositories`,
     headers: {
       'User-Agent': 'git-browse'
     }

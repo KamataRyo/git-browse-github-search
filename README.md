@@ -1,7 +1,8 @@
 # git-browse-github-search
 
-[![Build Status](https://travis-ci.org/KamataRyo/git-browse-github-search.svg?branch=master)](https://travis-ci.org/KamataRyo/git-browse-github-search)
 [![npm version](https://badge.fury.io/js/git-browse-github-search.svg)](https://badge.fury.io/js/ggit-browse-github-search)
+[![Build Status](https://travis-ci.org/KamataRyo/git-browse-github-search.svg?branch=master)](https://travis-ci.org/KamataRyo/git-browse-github-search)
+[![codecov](https://codecov.io/gh/KamataRyo/git-browse-github-search/branch/master/graph/badge.svg)](https://codecov.io/gh/KamataRyo/git-browse-github-search)
 
 This is sub-module for [git-browse](https://npmjs.com/git-browse).
 

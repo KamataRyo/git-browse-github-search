@@ -16,9 +16,8 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "cover": "babel-node $(npm bin)/isparta cover --report text _mocha",
     "lint": "eslint .",
-    "test": "mocha ./test/*.unit.js"
+    "test": "babel-node $(npm bin)/isparta cover --report text _mocha"
   },
   "author": "KamataRyo <mugil.cephalus+github.com@gmail.com>",
   "license": "MIT",
